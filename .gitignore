@@ -1,0 +1,4 @@
+.venv/
+Images/
+test/
+__pycache__/
