@@ -1,0 +1,33 @@
+want to build a pen plotter bot
+
+***CONSTRUCTION***
+*Keep construction of bot as simple as possible becuase mechanics is not the goal of this project*
+2 nema 17 stepper motors
+simple belt and pulley for each motor
+no gearbox needed
+about half a meter from one motor to the other
+make sure to weigh down belts propperly to hold tension in belt
+idea is to be able to plot on C sized paper (17" x 22")
+will not use entire paper but will scale down image in software to leave border
+
+***SOFTWARE**
+*I have a lot of ideas for this but implementing one the building is probably best*
+take a raster image as input (most likely jpeg)
+do some magic and turn it into a ton of motor instructions
+instructions get sent over serial to an ardiuno that moves the 2 steppers
+arduino returns a true value when motors reach new position
+next position is sent
+keep serial signal as simple as possible to reduce any lag time
+a lot of instructions will need to be sent for a single image
+
+    ***The Magic***
+    - first idea
+        grayscale image and then reduce even further to grayscale values
+        as in for range 0 -> 75 make it 50
+        do this for at most 6 regions
+        covert each level of gray to a motion to be done by the motors
+        layer these motions to add contrast over the entire image
+        the lowest level of gray will be applied to the entire image
+        next level is applied to only itself and levels above and so on
+
+        
