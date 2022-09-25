@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import utils
 
-img = cv2.imread('lake.jpg', 1)
+img = cv2.imread('images/lake.jpg', 1)
 print(f"{img.shape[0]} {img.shape[1]}")
 imgrez = utils.rez(img)
 imgGray = cv2.cvtColor(imgrez,cv2.COLOR_BGR2GRAY)

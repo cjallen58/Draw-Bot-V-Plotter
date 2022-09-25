@@ -17,6 +17,8 @@ def dithering(img, threshold):
     imgDither = np.zeros((height, width, 1), dtype = np.uint8)
 
     # for every pixel
+    """This algorithm is called Floyd-Steinberg Dithering. It was taken from wikipedia
+    https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering"""
     for i in range(height):
         for j in range(width):
             old = errimg[i, j]
@@ -47,6 +49,8 @@ def dithering(img, threshold):
     return imgDither
 
 def contrast(img):
+    # converts image to lab (whatever that is)
+    # splits the data items
     lab= cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l_channel, a, b = cv2.split(lab)
 
@@ -66,23 +70,27 @@ def pointConversion(dith):
     
     h =  dith.shape[0]
     w = dith.shape[1]
+    # creates empty numpy array for points
     points = np.zeros((1, 2))
-    
+    # for every point turn it into an x and y coordinate and add to new array
     for i in range(h):
         for j in range(w):
             if dith[i, j] == 0:
                 x = j
                 y = i
                 points = np.append(points,[[x, -y]], 0)
+    # remove first 0,0 point
     points = np.delete(points, 0, 0)
+    # splits the 2 columns into 2 seperate arrays inside a single array
     points = np.hsplit(points, 2)
     return points
 
 def rez(img):
+    # this function resizes the image while maintaining the original ratio
     h = img.shape[0]
     w = img.shape[1]
     r = round(h/w, 3)
-
+    # depending on the ratio either the height or width is changed first and the other is scaled to match
     if r < 1.332:
         wrez = 150
         hrez = round(wrez * r)
@@ -93,19 +101,16 @@ def rez(img):
     return cv2.resize(img, (wrez, hrez))
 
 def scale(points, Psize):
-    # determine paper size used on machine
+    # determine paper size used on machine and its max x and y values
     if Psize == 4:
-        m = 10
         s = 1.267
         xpmax = 210
         ypmax = 297
     elif Psize == 3:
-        m = 15
         s = 1.780
         xpmax = 297
         ypmax = 420
     elif Psize == 2:
-        m = 20
         s = 2.533
         xpmax = 420
         ypmax = 594
@@ -114,12 +119,9 @@ def scale(points, Psize):
         return
     
     points = np.multiply(points, s)
-    
-    xmax = np.amax(points[0])
-    ymax = np.amax(-points[1])
 
-    xdif = xpmax - xmax
-    ydif = ypmax - ymax
+    xdif = xpmax - np.amax(points[0])
+    ydif = ypmax - np.amax(-points[1])
 
     points[0] = points[0] + (xdif / 2)
     points[1] = points[1] - (ydif / 2)
