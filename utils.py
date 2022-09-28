@@ -1,3 +1,4 @@
+from modulefinder import packagePathMap
 import cv2
 import numpy as np
 from matplotlib import pyplot as pltt
@@ -120,8 +121,8 @@ def scale(points, Psize):
     
     points = np.multiply(points, s)
 
-    xdif = xpmax - np.amax(points[0])
-    ydif = ypmax - np.amax(-points[1])
+    xdif = round(xpmax - np.amax(points[0]), 3)
+    ydif = round(ypmax - np.amax(-points[1]), 3)
 
     points[0] = points[0] + (xdif / 2)
     points[1] = points[1] - (ydif / 2)
@@ -129,7 +130,37 @@ def scale(points, Psize):
     return points
 
 
-#def drawline(x_vals, y_vals)
+def order(points, paper_size):
+    if paper_size == 4:
+        xscale = 21
+        yscale = 29.7
+    elif paper_size == 3:
+        xscale = 29.7
+        yscale = 42
+    elif paper_size == 2:
+        xscale = 42
+        yscale = 59.4 
+    else:
+        return print("please enter valid paper size")
+    
+    count = 1
+    final_order = np.zeros((1,2))
+    while points.size > 0:
+        xrange = xscale * count
+        yrange = yscale * count
+        
+        tmp_array = np.zeros((1, 2))
+        place = 0
+        for i in points:
+            if i[0] <= xrange and i[1] <= yrange:
+                tmp_array = np.append(tmp_array, i, axis=0)
+                points = np.delete(points, place, 0)
+            place += 1
+        tmp_array = np.delete(tmp_array, 0,0)    
+        
+        for i in tmp_array:
+            
+
     # this is the traveling sales man problem
     # look at values within a small range of the paper (x,y)
     # start at point closest to 0,0

@@ -4,7 +4,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import utils
 
-img = cv2.imread('statue.jpg', 1)
+img = cv2.imread('Images/statue.jpg', 1)
 # at some point check image ratio to make sure it actually makes sense to use
 imgresize = utils.rez(img)
 
