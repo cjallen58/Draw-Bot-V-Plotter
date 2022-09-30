@@ -1,3 +1,5 @@
+from dis import dis
+from math import sqrt
 from modulefinder import packagePathMap
 import cv2
 import numpy as np
@@ -158,8 +160,24 @@ def order(points, paper_size):
             place += 1
         tmp_array = np.delete(tmp_array, 0,0)    
         
-        for i in tmp_array:
-            
+        while tmp_array.size > 0:
+            shortest = {}
+            for i in tmp_array:
+                xdistance = final_order[-1][0] - i[0]
+                ydistance = final_order[-1][1] - i[1]
+                distance = sqrt((xdistance**2) + (ydistance**2))
+
+                if 'distance' in shortest
+                    if distance < shortest['distance']:
+                        shortest['distance'] = distance
+                        shortest
+                    else:
+                        continue
+                else:
+                    shortest['distance'] = distance
+                    shortest['index'] = np.where(tmp_array == i)
+
+
 
     # this is the traveling sales man problem
     # look at values within a small range of the paper (x,y)

@@ -3,7 +3,10 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 import utils
-
+"""
+change this to use a command line argument
+for picture selection and paper size
+"""
 img = cv2.imread('Images/statue.jpg', 1)
 # at some point check image ratio to make sure it actually makes sense to use
 imgresize = utils.rez(img)
