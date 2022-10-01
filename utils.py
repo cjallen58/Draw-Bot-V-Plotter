@@ -145,16 +145,16 @@ def order(points, paper_size):
     else:
         return print("please enter valid paper size")
     
-    count = 1
+    count = 0
     final_order = np.zeros((1,2))
     while points.size > 0:
-        xrange = xscale * count
-        yrange = yscale * count
+        xrange = range((0 + xscale * count), (xscale * (count + 1)))
+        yrange = range((0 + yscale * count), (yscale * (count + 1)))
         
         tmp_array = np.zeros((1, 2))
         place = 0
         for i in points:
-            if i[0] <= xrange and i[1] <= yrange:
+            if i[0] in xrange and i[1] in yrange:
                 tmp_array = np.append(tmp_array, i, axis=0)
                 points = np.delete(points, place, 0)
             place += 1
@@ -167,7 +167,7 @@ def order(points, paper_size):
                 ydistance = final_order[-1][1] - i[1]
                 distance = sqrt((xdistance**2) + (ydistance**2))
 
-                if 'distance' in shortest
+                if 'distance' in shortest:
                     if distance < shortest['distance']:
                         shortest['distance'] = distance
                         shortest
@@ -184,7 +184,7 @@ def order(points, paper_size):
     # start at point closest to 0,0
     # rearrange into new arrays with values closest to eachother
     # once every value has been rearranged look at next chunk of points
-        
+
     
 
                         
