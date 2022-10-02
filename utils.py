@@ -151,8 +151,8 @@ def order(points):
     while points.size > 0:
         lcount += 1
         if lcount % 100000 == 0:
-            print(final_order.size)
-            print(tmp_array.size)
+            print('working')
+            
                     
         # change xrange based on current yrange 
         if ycount % 2 == 0 and lcount > 1:
@@ -167,10 +167,6 @@ def order(points):
         
         # search points and add any within the range to temp array and remove from point array
         for i in points:
-            if lcount == 1:
-                print(i[0], i[1])
-                print(xrangel, xrangeu)
-                print(yrangel, yrangeu)
             if xrangel <= i[0] <= xrangeu and yrangel <= i[1] <= yrangeu:
                 print("found point")
                 tmp_array = np.append(tmp_array, [i], axis=0)
@@ -181,7 +177,6 @@ def order(points):
         
         # sort points in temp array and add to final order
         while tmp_array.size > 0:
-            print(tmp_array)
             # dict for point that is closest to last point            
             shortest = {}
             # calc distance from last point to every point in array
