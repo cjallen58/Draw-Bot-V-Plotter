@@ -1,10 +1,8 @@
-from dis import dis
 from math import sqrt
-from modulefinder import packagePathMap
 import cv2
 import numpy as np
-from matplotlib import pyplot as pltt
-
+from matplotlib import pyplot as plt
+import sys
 
 def dithering(img, threshold):
     # usable variables needed for performing the Dithering
@@ -85,7 +83,7 @@ def pointConversion(dith):
     # remove first 0,0 point
     points = np.delete(points, 0, 0)
     # splits the 2 columns into 2 seperate arrays inside a single array
-    points = np.hsplit(points, 2)
+    # points = np.hsplit(points, 2)
     return points
 
 def rez(img):
@@ -132,50 +130,88 @@ def scale(points, Psize):
     return points
 
 
-def order(points, paper_size):
-    if paper_size == 4:
-        xscale = 21
-        yscale = 29.7
-    elif paper_size == 3:
-        xscale = 29.7
-        yscale = 42
-    elif paper_size == 2:
-        xscale = 42
-        yscale = 59.4 
-    else:
-        return print("please enter valid paper size")
+def order(points):
+    # If im being completely honest this needs to be rewritten entirely but
+    # for now i just want it to work
+    # FUCK im lost
     
-    count = 0
+    # initialize variables and arrays needed
+    xcount = 0
+    ycount = 0
+    lcount = 0
     final_order = np.zeros((1,2))
+    xscale = 15.0
+    yscale = -20.0
+    xrangeu = xscale
+    xrangel = 0.0
+    yrangel = yscale
+    yrangeu = 0.0
+
+    # sorting loop
     while points.size > 0:
-        xrange = range((0 + xscale * count), (xscale * (count + 1)))
-        yrange = range((0 + yscale * count), (yscale * (count + 1)))
-        
+        lcount += 1
+        if lcount % 100000 == 0:
+            print(final_order.size)
+            print(tmp_array.size)
+                    
+        # change xrange based on current yrange 
+        if ycount % 2 == 0 and lcount > 1:
+            xcount += 1
+        elif ycount % 2 == 1:
+            xcount -= 1
+        xrangeu = xscale * (xcount + 1) + 1
+        xrangel = 0 + xscale * xcount
+
+        # temp array and row counting variable
         tmp_array = np.zeros((1, 2))
-        place = 0
-        for i in points:
-            if i[0] in xrange and i[1] in yrange:
-                tmp_array = np.append(tmp_array, i, axis=0)
-                points = np.delete(points, place, 0)
-            place += 1
-        tmp_array = np.delete(tmp_array, 0,0)    
         
+        # search points and add any within the range to temp array and remove from point array
+        for i in points:
+            if lcount == 1:
+                print(i[0], i[1])
+                print(xrangel, xrangeu)
+                print(yrangel, yrangeu)
+            if xrangel <= i[0] <= xrangeu and yrangel <= i[1] <= yrangeu:
+                print("found point")
+                tmp_array = np.append(tmp_array, [i], axis=0)
+                r = np.where(points == i)
+                points = np.delete(points, r[0][0], 0)
+            
+        tmp_array = np.delete(tmp_array, 0, 0)
+        
+        # sort points in temp array and add to final order
         while tmp_array.size > 0:
+            print(tmp_array)
+            # dict for point that is closest to last point            
             shortest = {}
+            # calc distance from last point to every point in array
             for i in tmp_array:
                 xdistance = final_order[-1][0] - i[0]
                 ydistance = final_order[-1][1] - i[1]
                 distance = sqrt((xdistance**2) + (ydistance**2))
-
+                # compare distance and add to shortest if it is
                 if 'distance' in shortest:
                     if distance < shortest['distance']:
                         shortest['distance'] = distance
-                        shortest
+                        result = np.where(tmp_array == i)
+                        shortest['index'] = result[0][0]
+                        shortest['val'] = i 
                     else:
                         continue
                 else:
                     shortest['distance'] = distance
-                    shortest['index'] = np.where(tmp_array == i)
+                    result = np.where(tmp_array == i)
+                    shortest['index'] = result[0][0]
+                    shortest['val'] = i
+            final_order = np.append(final_order, [shortest['val']], axis=0)
+            tmp_array = np.delete(tmp_array, shortest['index'], 0)
+        
+        if 150 <= xrangeu or xcount == 0:
+            ycount += 1
+            yrangel = yscale * (ycount + 1) - 1
+            yrangeu = 0 + yscale * ycount
+    
+    return final_order    
 
 
 

@@ -16,11 +16,16 @@ imgGray = cv2.cvtColor(imgresize, cv2.COLOR_BGR2GRAY)
 imgDither = utils.dithering(imgGray, .2)
 
 ID = utils.pointConversion(imgDither)
-Points = utils.scale(ID, 2)
+final = utils.order(ID)
+
+final = np.hsplit(final, 2)
+Points = utils.scale(final, 2)
+
 
 plt.subplot(1, 2, 1)
-plt.plot(ID[0], ID[1], '.')
+plt.plot(final[0], final[1], '.')
 plt.title('Dither Image')
+
 
 plt.subplot(1, 2, 2)
 plt.plot(Points[0], Points[1], '.')
