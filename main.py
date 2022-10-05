@@ -14,7 +14,7 @@ imgresize = utils.rez(img)
 
 imgGray = cv2.cvtColor(imgresize, cv2.COLOR_BGR2GRAY)
 
-imgDither = utils.dithering(imgGray, .2)
+imgDither = utils.dithering(imgGray, .35)
 
 ID = utils.pointConversion(imgDither)
 final = utils.order(ID)
