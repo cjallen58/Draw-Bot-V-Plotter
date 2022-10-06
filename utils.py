@@ -142,8 +142,8 @@ def order(points):
     ycount = 0
     lcount = 0
     final_order = np.zeros((1,2))
-    xscale = 5.0
-    yscale = -5.0
+    xscale = 15.0
+    yscale = -20.0
     xrangeu = xscale
     xrangel = 0.0
     yrangel = yscale
@@ -158,16 +158,17 @@ def order(points):
         if (150 <= xrangeu and ychange) or (xcount == 0 and lcount > 2 and ychange):
             ychange = False
             ycount += 1
-            yrangel = yscale * (ycount + 1)
-            yrangeu = 0 + yscale * ycount
         elif ycount % 2 == 0 and lcount > 1:
             ychange = True
             xcount += 1
         elif ycount % 2 == 1:
             ychange = True
             xcount -= 1
+        
         xrangeu = xscale * (xcount + 1)
         xrangel = 0 + xscale * xcount
+        yrangel = yscale * (ycount + 1)
+        yrangeu = 0 + yscale * ycount
 
         # temp array and row counting variable
         tmp_array = np.zeros((1, 2))
@@ -179,7 +180,8 @@ def order(points):
                 tmp_array = np.append(tmp_array, [i], axis=0)
                 r = np.where(points == i)
                 points = np.delete(points, r[0][0], 0)
-            
+        if yrangeu == -180 and yrangel == -200:
+            print(f"tmp array \n{tmp_array}")
         tmp_array = np.delete(tmp_array, 0, 0)
         
         # sort points in temp array and add to final order
@@ -205,10 +207,12 @@ def order(points):
                     result = np.where(tmp_array == i)
                     shortest['index'] = result[0][0]
                     shortest['val'] = i
+
             final_order = np.append(final_order, [shortest['val']], axis=0)
             tmp_array = np.delete(tmp_array, shortest['index'], 0)
             
             # Debug while loop section
+        """
         if lcount <= 101:
             print(f"loop: {lcount}")
             print(f"xl: {xrangel} xu: {xrangeu}")
@@ -217,11 +221,13 @@ def order(points):
             print()
         if lcount == 1001:
             print(points)
+        """
 
     print(f"loop: {lcount}")
     print(f"xl: {xrangel} xu: {xrangeu}")
     print(f"yl: {yrangel} yu: {yrangeu}")
     print(points[0], points.size, final_order.size)
+    print(points)
     print()
     return final_order    
 
