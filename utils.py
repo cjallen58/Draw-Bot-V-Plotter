@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 import sys
+import time
 
 def dithering(img, threshold):
     # usable variables needed for performing the Dithering
@@ -131,107 +132,53 @@ def scale(points, Psize):
 
 
 def order(points):
-    # If im being completely honest this needs to be rewritten entirely but
+    # points will be a numpy array
     # for now i just want it to work
-    # FUCK im lost -- ok im not lost anymore
-    # somehow missing points in the last y row
     # also need to increase my point density
+    # time to rewrite the entire thing using dijkstras algorithm
+    # didnt quite do that but im getting closer
+    # it seems to bounce back and forth as it hits every point
+    # need to filter a small subsection of the graph first and then iterate over a range
 
-    # initialize variables and arrays needed
-    xcount = 0
-    ycount = 0
+    
+    #initialize final point order and make 0,0 the first point
+    start_time = time.time()
+    final_order = np.zeros((1, 2))
     lcount = 0
-    final_order = np.zeros((1,2))
-    xscale = 15.0
-    yscale = -20.0
-    xrangeu = xscale
-    xrangel = 0.0
-    yrangel = yscale
-    yrangeu = 0.0
-    print(points.size)
-    # sorting loop
-    while lcount <= 10000: #points.size > 0:
-        lcount += 1
-                    
-        # change xrange based on current yrange 
-        
-        if (150 <= xrangeu and ychange) or (xcount == 0 and lcount > 2 and ychange):
-            ychange = False
-            ycount += 1
-        elif ycount % 2 == 0 and lcount > 1:
-            ychange = True
-            xcount += 1
-        elif ycount % 2 == 1:
-            ychange = True
-            xcount -= 1
-        
-        xrangeu = xscale * (xcount + 1)
-        xrangel = 0 + xscale * xcount
-        yrangel = yscale * (ycount + 1)
-        yrangeu = 0 + yscale * ycount
+    print(f"points: {points.size / 2}")
 
-        # temp array and row counting variable
-        tmp_array = np.zeros((1, 2))
-        
-        # search points and add any within the range to temp array and remove from point array
-        for i in points:
-            if xrangel <= i[0] <= xrangeu and yrangel <= i[1] <= yrangeu:
-                #print("found point")
-                tmp_array = np.append(tmp_array, [i], axis=0)
-                r = np.where(points == i)
-                points = np.delete(points, r[0][0], 0)
-        if yrangeu == -180 and yrangel == -200:
-            print(f"tmp array \n{tmp_array}")
-        tmp_array = np.delete(tmp_array, 0, 0)
-        
-        # sort points in temp array and add to final order
-        while tmp_array.size > 0:
-            # dict for point that is closest to last point            
-            shortest = {}
-            # calc distance from last point to every point in array
-            for i in tmp_array:
-                xdistance = final_order[-1][0] - i[0]
-                ydistance = final_order[-1][1] - i[1]
-                distance = sqrt((xdistance**2) + (ydistance**2))
-                # compare distance and add to shortest if it is
-                if 'distance' in shortest:
-                    if distance < shortest['distance']:
-                        shortest['distance'] = distance
-                        result = np.where(tmp_array == i)
-                        shortest['index'] = result[0][0]
-                        shortest['val'] = i 
-                    else:
-                        continue
+    while points.size > 0:
+        #dictionary to store the closest point
+        shortest = {}
+        for row in points:
+            #calculate distance
+            dist = sqrt((row[0]**2) + (row[1]**2))
+            #compare distances and update shortest
+            if 'distance' in shortest:
+                if dist < shortest['distance']:
+                    shortest['distance'] = dist
+                    shortest['point'] = row
                 else:
-                    shortest['distance'] = distance
-                    result = np.where(tmp_array == i)
-                    shortest['index'] = result[0][0]
-                    shortest['val'] = i
+                    continue
+            else:
+                shortest['distance'] = dist
+                shortest['point'] = row
+        #track run time
+        run_time = round(time.time() - start_time, 3)
+        lcount += 1
+        
+        #debug 
+        if lcount % 1000 == 0:
+            print(f"\nrunning")
+            print(f"points remaining: {points.size / 2}")
+            print(f"run time: {run_time}")
 
-            final_order = np.append(final_order, [shortest['val']], axis=0)
-            tmp_array = np.delete(tmp_array, shortest['index'], 0)
-            
-            # Debug while loop section
-        """
-        if lcount <= 101:
-            print(f"loop: {lcount}")
-            print(f"xl: {xrangel} xu: {xrangeu}")
-            print(f"yl: {yrangel} yu: {yrangeu}")
-            print(points[0], points.size, final_order.size)
-            print()
-        if lcount == 1001:
-            print(points)
-        """
-
-    print(f"loop: {lcount}")
-    print(f"xl: {xrangel} xu: {xrangeu}")
-    print(f"yl: {yrangel} yu: {yrangeu}")
-    print(points[0], points.size, final_order.size)
-    print(points)
-    print()
-    return final_order    
-
-
+        #appened short point coordinates to final order
+        final_order = np.append(final_order, [shortest['point']], axis = 0)
+        location = np.where(points == shortest['point'])
+        points = np.delete(points,location[0][0], 0)
+    
+    return final_order
     
 
                         

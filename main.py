@@ -37,6 +37,6 @@ cv2.imshow('resize', imgresize)
 cv2.imshow('Gray', imgGray)
 cv2.imshow('Dith', imgDither)
 """
-plt.plot(Points[0], Points[1])
+plt.plot(Points[0], Points[1], c = 'k', linewidth = .2)
 plt.show()
 cv2.waitKey(0)
