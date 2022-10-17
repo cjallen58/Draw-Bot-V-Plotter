@@ -140,7 +140,7 @@ def order(points):
     # it seems to bounce back and forth as it hits every point
     # need to filter a small subsection of the graph first and then iterate over a range
 
-    
+
     #initialize final point order and make 0,0 the first point
     start_time = time.time()
     final_order = np.zeros((1, 2))
@@ -148,11 +148,14 @@ def order(points):
     print(f"points: {points.size / 2}")
 
     while points.size > 0:
+        
         #dictionary to store the closest point
         shortest = {}
         for row in points:
+            
             #calculate distance
             dist = sqrt((row[0]**2) + (row[1]**2))
+            
             #compare distances and update shortest
             if 'distance' in shortest:
                 if dist < shortest['distance']:
@@ -163,6 +166,7 @@ def order(points):
             else:
                 shortest['distance'] = dist
                 shortest['point'] = row
+        
         #track run time
         run_time = round(time.time() - start_time, 3)
         lcount += 1
@@ -180,8 +184,38 @@ def order(points):
     
     return final_order
     
+def mid_point_search(points):
+   
+    """
+    this is gonna be interesting.
+    General Idea:
+    1: define first point and end point in a new array
+        start will be 0,0 end will be xmax, ymax or the bottom right point
+    2: from list of points find the point mid way between start and end 
+    3: recursivly do this moving towards the start point
+    4: when no points between start and closest point from recursion and do the same moving away from start.
+        this is similar to the sort left then right in a recursive merge sort
+        the jumping to mid points was inspisred by binary seraching
+    5: please for the love of god i hope this works
+    """
+    start_time = time.time()
+    final_order = np.zeros((1, 2))
+    lcount = 0                     
+    final_order = np.append(final_order, [points[-1]], axis = 0)
+    points = np.delete(points, -1, 0)
+    #i need to organize these calculations to work properly with recursion
+    length = sqrt(final_order[0][0]**2 + final_order[0][1]**2) - sqrt(final_order[1][0]**2 + final_order[1][1]**2)
+    
+    # i now have my starting point and end point in final_order as well as the length between them
+    # now find find mid-point
+    list = []
+    for row in points
+        # this is going to be tricky and very calculation intensive 
+        
+        distance = sqrt(row[0]** + row[1]**2)
+        location = np.where(points == row)
 
-                        
+
 
             
 
