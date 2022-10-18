@@ -209,7 +209,7 @@ def mid_point_search(points):
     # i now have my starting point and end point in final_order as well as the length between them
     # now find find mid-point
     list = []
-    for row in points
+    for row in points:
         # this is going to be tricky and very calculation intensive 
         
         distance = sqrt(row[0]** + row[1]**2)
