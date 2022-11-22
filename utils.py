@@ -2,10 +2,11 @@ from math import sqrt
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
+
 import sys
 import time
 
-def dithering(img, threshold):
+def dithering(img, threshold=.35):
     # usable variables needed for performing the Dithering
     height =  img.shape[0]
     width = img.shape[1]
@@ -214,6 +215,14 @@ def mid_point_search(points):
         
         distance = sqrt(row[0]** + row[1]**2)
         location = np.where(points == row)
+
+def tspsort(Dithered_image):
+    """apparently i just learned months after starting this 
+    that someone else was nice enough to solve this exact problem for me
+    im so happy that after all this time and ripping my hair out over my own
+    algorithm that I found exactly what i need at 
+    https://randalolson.com/2018/04/11/traveling-salesman-portrait-in-python/"""
+    
 
 
 

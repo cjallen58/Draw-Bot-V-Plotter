@@ -1,2 +1,5 @@
 opencv-python
 matplotlib
+scipy
+tsp-solver2
+pillow
