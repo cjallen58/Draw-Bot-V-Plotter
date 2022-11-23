@@ -131,7 +131,6 @@ def scale(points, Psize):
     
     return points
 
-
 def order(points):
     # points will be a numpy array
     # for now i just want it to work
