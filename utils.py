@@ -2,6 +2,9 @@ from math import sqrt
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
+from scipy.spatial.distance import pdist, squareform
+from tsp_solver.greedy_numpy import solve_tsp
+
 
 import sys
 import time
@@ -65,7 +68,7 @@ def contrast(img):
     # merge the CLAHE enhanced L-channel with the a and b channel
     limg = cv2.merge((cl,a,b))
 
-    # Converting image from LAB Color model to BGR color spcae
+    # Converting image from LAB Color model to BGR color space
     enhanced_img = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
     return enhanced_img
 
@@ -95,10 +98,10 @@ def rez(img):
     r = round(h/w, 3)
     # depending on the ratio either the height or width is changed first and the other is scaled to match
     if r < 1.332:
-        wrez = 150
+        wrez = 300
         hrez = round(wrez * r)
     else:
-        hrez = 200
+        hrez = 400
         wrez = round(hrez / r)
     
     return cv2.resize(img, (wrez, hrez))
@@ -216,13 +219,20 @@ def mid_point_search(points):
         location = np.where(points == row)
 
 def tspsort(Dithered_image):
-    """apparently i just learned months after starting this 
+    """apparently i just learned, months after starting this, 
     that someone else was nice enough to solve this exact problem for me
     im so happy that after all this time and ripping my hair out over my own
     algorithm that I found exactly what i need at 
     https://randalolson.com/2018/04/11/traveling-salesman-portrait-in-python/"""
-    
-
+    black_points = np.argwhere(Dithered_image == 0)
+    black_points = np.delete(black_points, 2, 1)
+    distances = pdist(black_points)
+    dist_matrix = squareform(distances)
+    path = solve_tsp(dist_matrix)
+    final_points = [black_points[x] for x in path]
+    x_vals = [x[1] for x in final_points]
+    y_vals = [-x[0] for x in final_points]
+    return [x_vals, y_vals]
 
 
             
