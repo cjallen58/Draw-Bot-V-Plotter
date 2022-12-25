@@ -98,10 +98,10 @@ def rez(img):
     r = round(h/w, 3)
     # depending on the ratio either the height or width is changed first and the other is scaled to match
     if r < 1.332:
-        wrez = 300
+        wrez = 600
         hrez = round(wrez * r)
     else:
-        hrez = 400
+        hrez = 800
         wrez = round(hrez / r)
     
     return cv2.resize(img, (wrez, hrez))
@@ -224,6 +224,19 @@ def tspsort(Dithered_image):
     im so happy that after all this time and ripping my hair out over my own
     algorithm that I found exactly what i need at 
     https://randalolson.com/2018/04/11/traveling-salesman-portrait-in-python/"""
+    
+    """Alright my newest idea is to seperate the dithered image into sub sections
+    to reduce the amount of calculations needed for the tsp solver. Apply the tsp
+    to these sub sections and then within the section just do a nearest search.
+    Hopefully this wont make the program take 40 hours..."""
+    # I should have commented this more
+
+    # First seperate dithiered image into a more condensed array
+    x = 5
+    y = 5
+    hieght = Dithered_image.shape[0]
+    width = Dithered_image.shape[1]
+    
     black_points = np.argwhere(Dithered_image == 0)
     black_points = np.delete(black_points, 2, 1)
     distances = pdist(black_points)
