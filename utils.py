@@ -230,18 +230,40 @@ def tspsort(Dithered_image):
     to these sub sections and then within the section just do a nearest search.
     Hopefully this wont make the program take 40 hours..."""
     # I should have commented this more
-
     # First seperate dithiered image into a more condensed array
     x = 5
     y = 5
-    hieght = Dithered_image.shape[0]
+    xmin = x -5
+    ymin = y - 5
+    indicies = np.zeros((1, 2))
+    height = Dithered_image.shape[0]
     width = Dithered_image.shape[1]
-    
+    while y <= height:
+        while x <= width:
+            xmin = x - 5
+            ymin = y - 5
+            new = Dithered_image[xmin:(x+1), ymin:(y+1)]
+            #check if there are black pixels in new array
+            points = np.argwhere(new == 0)
+            #store index if there is... i can run the tsp solver on this index later
+            if points.size:
+                i = (x / 5) - 1
+                j = (y / 5) - 1
+                indicies = np.append(indicies, [[1, 5]], axis=0)
+
+        y + 5
+    indicies = np.delete(indicies, 0, 0)
+
+
+    #finds all indicies with 0
     black_points = np.argwhere(Dithered_image == 0)
     black_points = np.delete(black_points, 2, 1)
+    #creates distance matrix
     distances = pdist(black_points)
     dist_matrix = squareform(distances)
+    #runs tsp
     path = solve_tsp(dist_matrix)
+    #formats final point data and return
     final_points = [black_points[x] for x in path]
     x_vals = [x[1] for x in final_points]
     y_vals = [-x[0] for x in final_points]
