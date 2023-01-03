@@ -73,18 +73,16 @@ def contrast(img):
     return enhanced_img
 
 def pointConversion(dith):
-    
+    # this function can probably be replaced by np.argwhere
     h =  dith.shape[0]
     w = dith.shape[1]
     # creates empty numpy array for points
     points = np.zeros((1, 2))
     # for every point turn it into an x and y coordinate and add to new array
-    for i in range(h):
-        for j in range(w):
+    for j in range(h):
+        for i in range(w):
             if dith[i, j] == 0:
-                x = j
-                y = i
-                points = np.append(points,[[x, -y]], 0)
+                points = np.append(points,[[i, -j]], 0)
     # remove first 0,0 point
     points = np.delete(points, 0, 0)
     # splits the 2 columns into 2 seperate arrays inside a single array
@@ -235,6 +233,7 @@ def tspsort(Dithered_image):
     y = 5
     xmin = x -5
     ymin = y - 5
+    i = j = 0
     indicies = np.zeros((1, 2))
     height = Dithered_image.shape[0]
     width = Dithered_image.shape[1]
@@ -247,12 +246,15 @@ def tspsort(Dithered_image):
             points = np.argwhere(new == 0)
             #store index if there is... i can run the tsp solver on this index later
             if points.size:
-                i = (x / 5) - 1
-                j = (y / 5) - 1
-                indicies = np.append(indicies, [[1, 5]], axis=0)
-
-        y + 5
+                indicies = np.append(indicies, [[i, j]], axis=0)
+            x += 5
+            i += 1
+        y += 5
+        j += 1
+        x = 5
+        i = 0
     indicies = np.delete(indicies, 0, 0)
+    # block above reduces array signifgantly and now i can run the tsp on that
 
 
     #finds all indicies with 0
