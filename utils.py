@@ -72,23 +72,6 @@ def contrast(img):
     enhanced_img = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
     return enhanced_img
 
-def pointConversion(dith):
-    # this function can probably be replaced by np.argwhere
-    h =  dith.shape[0]
-    w = dith.shape[1]
-    # creates empty numpy array for points
-    points = np.zeros((1, 2))
-    # for every point turn it into an x and y coordinate and add to new array
-    for j in range(h):
-        for i in range(w):
-            if dith[i, j] == 0:
-                points = np.append(points,[[i, -j]], 0)
-    # remove first 0,0 point
-    points = np.delete(points, 0, 0)
-    # splits the 2 columns into 2 seperate arrays inside a single array
-    # points = np.hsplit(points, 2)
-    return points
-
 def rez(img):
     # this function resizes the image while maintaining the original ratio
     h = img.shape[0]
@@ -96,10 +79,10 @@ def rez(img):
     r = round(h/w, 3)
     # depending on the ratio either the height or width is changed first and the other is scaled to match
     if r < 1.332:
-        wrez = 600
+        wrez = 450
         hrez = round(wrez * r)
     else:
-        hrez = 800
+        hrez = 600
         wrez = round(hrez / r)
     
     return cv2.resize(img, (wrez, hrez))
@@ -256,20 +239,20 @@ def tspsort(Dithered_image):
     indicies = np.delete(indicies, 0, 0)
     # block above reduces array signifgantly and now i can run the tsp on that
 
-
-    #finds all indicies with 0
-    black_points = np.argwhere(Dithered_image == 0)
-    black_points = np.delete(black_points, 2, 1)
     #creates distance matrix
-    distances = pdist(black_points)
+    distances = pdist(indicies)
     dist_matrix = squareform(distances)
     #runs tsp
+    # path is a list of the indicies of points not the points themselves
     path = solve_tsp(dist_matrix)
     #formats final point data and return
-    final_points = [black_points[x] for x in path]
-    x_vals = [x[1] for x in final_points]
-    y_vals = [-x[0] for x in final_points]
-    return [x_vals, y_vals]
+    block_points = [indicies[x] for x in path]
+    
+    #x_vals = [x[1] for x in final_points]
+    #y_vals = [-x[0] for x in final_points]
+    
+    return block_points
+    #return [x_vals, y_vals]
 
 
             
