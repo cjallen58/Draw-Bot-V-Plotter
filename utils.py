@@ -167,92 +167,20 @@ def order(points):
         points = np.delete(points,location[0][0], 0)
     
     return final_order
-    
-def mid_point_search(points):
-   
-    """
-    this is gonna be interesting.
-    General Idea:
-    1: define first point and end point in a new array
-        start will be 0,0 end will be xmax, ymax or the bottom right point
-    2: from list of points find the point mid way between start and end 
-    3: recursivly do this moving towards the start point
-    4: when no points between start and closest point from recursion and do the same moving away from start.
-        this is similar to the sort left then right in a recursive merge sort
-        the jumping to mid points was inspisred by binary seraching
-    5: please for the love of god i hope this works
-    """
-    start_time = time.time()
-    final_order = np.zeros((1, 2))
-    lcount = 0                     
-    final_order = np.append(final_order, [points[-1]], axis = 0)
-    points = np.delete(points, -1, 0)
-    #i need to organize these calculations to work properly with recursion
-    length = sqrt(final_order[0][0]**2 + final_order[0][1]**2) - sqrt(final_order[1][0]**2 + final_order[1][1]**2)
-    
-    # i now have my starting point and end point in final_order as well as the length between them
-    # now find find mid-point
-    list = []
-    for row in points:
-        # this is going to be tricky and very calculation intensive 
-        
-        distance = sqrt(row[0]** + row[1]**2)
-        location = np.where(points == row)
 
-def tspsort(Dithered_image):
-    """apparently i just learned, months after starting this, 
-    that someone else was nice enough to solve this exact problem for me
-    im so happy that after all this time and ripping my hair out over my own
-    algorithm that I found exactly what i need at 
-    https://randalolson.com/2018/04/11/traveling-salesman-portrait-in-python/"""
-    
-    """Alright my newest idea is to seperate the dithered image into sub sections
-    to reduce the amount of calculations needed for the tsp solver. Apply the tsp
-    to these sub sections and then within the section just do a nearest search.
-    Hopefully this wont make the program take 40 hours..."""
-    # I should have commented this more
-    # First seperate dithiered image into a more condensed array
-    x = 5
-    y = 5
-    xmin = x -5
-    ymin = y - 5
-    i = j = 0
-    indicies = np.zeros((1, 2))
-    height = Dithered_image.shape[0]
-    width = Dithered_image.shape[1]
-    while y <= height:
-        while x <= width:
-            xmin = x - 5
-            ymin = y - 5
-            new = Dithered_image[xmin:(x+1), ymin:(y+1)]
-            #check if there are black pixels in new array
-            points = np.argwhere(new == 0)
-            #store index if there is... i can run the tsp solver on this index later
-            if points.size:
-                indicies = np.append(indicies, [[i, j]], axis=0)
-            x += 5
-            i += 1
-        y += 5
-        j += 1
-        x = 5
-        i = 0
-    indicies = np.delete(indicies, 0, 0)
-    # block above reduces array signifgantly and now i can run the tsp on that
+def nearest_neighbor_tsp(distance_matrix):
+    num_cities = len(distance_matrix)
+    unvisited_cities = set(range(num_cities))
+    start_city = np.random.choice(num_cities)
+    tour = [start_city]
+    unvisited_cities.remove(start_city)
+    while unvisited_cities:
+        nearest_city = min(unvisited_cities, key=lambda city: distance_matrix[tour[-1]][city])
+        tour.append(nearest_city)
+        unvisited_cities.remove(nearest_city)
+    return tour, sum(distance_matrix[tour[i - 1]][tour[i]] for i in range(num_cities))
 
-    #creates distance matrix
-    distances = pdist(indicies)
-    dist_matrix = squareform(distances)
-    #runs tsp
-    # path is a list of the indicies of points not the points themselves
-    path = solve_tsp(dist_matrix)
-    #formats final point data and return
-    block_points = [indicies[x] for x in path]
-    
-    #x_vals = [x[1] for x in final_points]
-    #y_vals = [-x[0] for x in final_points]
-    
-    return block_points
-    #return [x_vals, y_vals]
+
 
 
             
