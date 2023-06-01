@@ -4,8 +4,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy.spatial.distance import pdist, squareform
 from tsp_solver.greedy_numpy import solve_tsp
-
-
 import sys
 import time
 
@@ -53,6 +51,34 @@ def dithering(img, threshold=.35):
                 errimg[i + 1, j + 1] = errimg[i + 1, j + 1] + ((err * 1/16)/255)
 
     return imgDither
+
+def WVS(img):
+    """
+    This is for weighted voronoi stippling:
+    1. generate random points in a new image the same size as input image
+    2. check pixels around points and move points to nearest darkest pixel
+    3. iterate this process a set amount of times
+
+    Honestly this would be better to do in C or C++ butt fuck it 
+    """
+    # making blank image and generating random points
+    height =  img.shape[0]
+    width = img.shape[1]
+    imgStipple = np.zeros((height, width, 1), dtype = np.uint8)
+    
+    points = 10000
+    iterations = 100
+    rand_points = np.random.rand(points, 2)
+    rand_points[:, 0] *= width
+    rand_points[:, 1] *= height
+    rand_points = np.round(rand_points)
+
+    for i in height:
+        for j in width:
+            pass
+
+
+
 
 def contrast(img):
     # converts image to lab (whatever that is)
@@ -116,14 +142,6 @@ def scale(points, Psize):
     return points
 
 def order(points):
-    # points will be a numpy array
-    # for now i just want it to work
-    # also need to increase my point density
-    # time to rewrite the entire thing using dijkstras algorithm
-    # didnt quite do that but im getting closer
-    # it seems to bounce back and forth as it hits every point
-    # need to filter a small subsection of the graph first and then iterate over a range
-
 
     #initialize final point order and make 0,0 the first point
     start_time = time.time()
@@ -168,6 +186,16 @@ def order(points):
     
     return final_order
 
+def dist_matrix(points_array):
+    num = points_array.shape[0]
+    dist = np.zeros((num, num))
+    for i in range(num):
+        for j in range(num):
+            if i == j:
+                continue
+            dist[i][j] = np.linalg.norm(test[i] - test[j])
+    return dist
+
 def nearest_neighbor_tsp(distance_matrix):
     num_cities = len(distance_matrix)
     unvisited_cities = set(range(num_cities))
@@ -178,9 +206,26 @@ def nearest_neighbor_tsp(distance_matrix):
         nearest_city = min(unvisited_cities, key=lambda city: distance_matrix[tour[-1]][city])
         tour.append(nearest_city)
         unvisited_cities.remove(nearest_city)
-    return tour, sum(distance_matrix[tour[i - 1]][tour[i]] for i in range(num_cities))
+    return tour #, sum(distance_matrix[tour[i - 1]][tour[i]] for i in range(num_cities))
 
+def nearest_neighbor_it(points_array):
+    tour = np.zeros((1, 2))
+    while points_array.size > 0:
+        current = tour[-1]
+        nearest_city = None
+        nearest_dist = float('inf')
+        for i in range(len(points_array)):
+            if np.array_equal(points_array[i], current):
+                continue
+            distance = np.linalg.norm(current - points_array[i])
+            if distance < nearest_dist:
+                nearest_city = i
+                nearest_dist = distance
+        tour = np.append(tour, [points_array[nearest_city]], axis=0)
+        location = np.where(points_array == tour[-1])
+        points_array = np.delete(points_array, location[0][0], 0)
 
+    return tour
 
 
             
