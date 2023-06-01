@@ -193,7 +193,7 @@ def dist_matrix(points_array):
         for j in range(num):
             if i == j:
                 continue
-            dist[i][j] = np.linalg.norm(test[i] - test[j])
+            dist[i][j] = np.linalg.norm(points_array[i] - points_array[j])
     return dist
 
 def nearest_neighbor_tsp(distance_matrix):
