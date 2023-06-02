@@ -66,18 +66,30 @@ def WVS(img):
     width = img.shape[1]
     imgStipple = np.zeros((height, width, 1), dtype = np.uint8)
     
-    points = 10000
+    points = 10100
     iterations = 100
     rand_points = np.random.rand(points, 2)
     rand_points[:, 0] *= width
     rand_points[:, 1] *= height
     rand_points = np.round(rand_points)
+    rand_points = np.unique(rand_points, axis=0)
 
-    for i in height:
-        for j in width:
-            pass
+    for i in rand_points:
+        # Look at 8 pixels surrounding point and point pixel itself
+        h = i[0]
+        w = i[1]
+        xrange = range((x - 1), (x + 2))
+        yrange = range((y - 1), (y + 2))
+        darkest = img[h, w]
+        for y in yrange:
+            for x in xrange:
+            # find darkest pixel in group
+                if img[x,y] > darkest:
+                    darkest = img[x,y]
 
-
+        # check if there is already a point in that location
+        # if false move point to that location
+        # if true find next darkest, repeat
 
 
 def contrast(img):
