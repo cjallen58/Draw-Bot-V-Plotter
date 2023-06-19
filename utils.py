@@ -52,7 +52,7 @@ def dithering(img, threshold=.35):
 
     return imgDither
 
-def WVS(img, iterations=100):
+def WVS(img, points=10100, iterations=100):
     """
     This is for weighted voronoi stippling:
     1. generate random points in a new image the same size as input image
@@ -65,17 +65,25 @@ def WVS(img, iterations=100):
     height =  img.shape[0]
     width = img.shape[1]
     #imgStipple = np.zeros((height, width, 1), dtype = np.uint8)
-    points = 10100
     rand_points = np.random.rand(points, 2)
-    rand_points[:, 0] *= width
-    rand_points[:, 1] *= height
+    rand_points[:, 0] *= (height - 1)
+    rand_points[:, 1] *= (width - 1)
     rand_points = np.round(rand_points)
     rand_points = np.unique(rand_points, axis=0)
     rand_points  = rand_points.astype(int)
-    index = 0
+    #print(rand_points)
+    points = np.argwhere(rand_points[1] >= 450)
+    if points:
+        print(points.shape)
+        print(points)
+        return
+    
     while(iterations > 0):
+        index = 0
+        print(f"iterations: {iterations}")
         for i in rand_points[:]:
-            if not (index % 10):
+            #print(f"center: {i}")
+            if not (index % 100):
                 print(f"index: {index}")
             location = [i[0], i[1]]
             # Look at 8 pixels surrounding point and point pixel itself
@@ -87,22 +95,27 @@ def WVS(img, iterations=100):
                         "value" : img[h, w]}
             
             for y in yrange:
+                #print(f"y: {y}")
                 for x in xrange:
-                    current = [x, y]
+                    #print(f"x: {x}")
+                    current = [y, x]
                     # check if there is already a point in location
+                    if y > (height - 1) or y < 1:
+                        continue 
+                    if x > (width - 1) or x < 1:
+                        continue
                     if current in rand_points.tolist():
                         continue
                     # check if that location is darker than current
-                    if img[x, y] > darkest["value"]:
+                    if img[y, x] > darkest["value"]:
                         darkest["location"] = current
-                        darkest["value"] = img[x, y]
+                        darkest["value"] = img[y, x]
             
             #save darkest point as new index
             rand_points[index] = darkest["location"]
             index += 1
-        iteration -= 1
+        iterations -= 1
     return rand_points            
-
 
 def contrast(img):
     # converts image to lab (whatever that is)

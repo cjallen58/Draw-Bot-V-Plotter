@@ -16,11 +16,15 @@ imgGray = cv2.cvtColor(imgresize, cv2.COLOR_BGR2GRAY)
 
 imgDither = utils.dithering(imgGray, .35)
 
-ID = utils.pointConversion(imgDither)
-final = utils.order(ID)
+WVS = utils.WVS(imgGray,points=1000,iterations = 10)
 
-final = np.hsplit(final, 2)
-Points = utils.scale(final, 2)
+#ID = utils.pointConversion(imgDither)
+#final = utils.order(ID)
+
+#final = np.hsplit(final, 2)
+#Points = utils.scale(final, 2)
+
+
 
 """
 plt.subplot(1, 2, 1)
@@ -37,6 +41,6 @@ cv2.imshow('resize', imgresize)
 cv2.imshow('Gray', imgGray)
 cv2.imshow('Dith', imgDither)
 """
-plt.plot(Points[0], Points[1], c = 'k', linewidth = .2)
-plt.show()
-cv2.waitKey(0)
+#plt.plot(Points[0], Points[1], c = 'k', linewidth = .2)
+#plt.show()
+#cv2.waitKey(0)
