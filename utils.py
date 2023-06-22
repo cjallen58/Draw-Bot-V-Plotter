@@ -71,20 +71,17 @@ def WVS(img, points=10100, iterations=100):
     rand_points = np.round(rand_points)
     rand_points = np.unique(rand_points, axis=0)
     rand_points  = rand_points.astype(int)
-    #print(rand_points)
-    points = np.argwhere(rand_points[1] >= 450)
-    if points:
-        print(points.shape)
-        print(points)
-        return
-    
+    print(f"points: {rand_points}")
+
     while(iterations > 0):
+        moved = 0
         index = 0
         print(f"iterations: {iterations}")
         for i in rand_points[:]:
             #print(f"center: {i}")
-            if not (index % 100):
+            if not (index % 1):
                 print(f"index: {index}")
+                print(f"moved: {moved}")
             location = [i[0], i[1]]
             # Look at 8 pixels surrounding point and point pixel itself
             h = location[0]
@@ -110,11 +107,13 @@ def WVS(img, points=10100, iterations=100):
                     if img[y, x] > darkest["value"]:
                         darkest["location"] = current
                         darkest["value"] = img[y, x]
+                        moved += 1
             
             #save darkest point as new index
             rand_points[index] = darkest["location"]
             index += 1
         iterations -= 1
+        print(f"points: {rand_points}")
     return rand_points            
 
 def contrast(img):
